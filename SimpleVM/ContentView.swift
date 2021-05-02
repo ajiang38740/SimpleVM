@@ -18,6 +18,9 @@ struct ContentView: View {
             Text("Boot Parameter: ")
             TextField("", text: Binding($viewModel.kernelParameter)!).disableAutocorrection(true)
             
+            Text("Mac Address: ")
+            TextField("", text: Binding($viewModel.macAddress)!).disableAutocorrection(true)
+            
             Text("vmlinux: \(viewModel.kernelURL?.lastPathComponent ?? "(Drag to here)")")
                 .padding([.top, .bottom])
                 .onDrop(of: [.fileURL], isTargeted: nil) { itemProviders -> Bool in

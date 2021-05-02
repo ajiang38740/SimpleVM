@@ -17,6 +17,7 @@ class VirtualMachineViewModel: NSObject, ObservableObject, VZVirtualMachineDeleg
     @Published var initialRamdiskURL: URL?
     @Published var bootableImageURL: URL?
     @Published var kernelParameter: String? = "console=hvc0 root=/dev/vda "
+    @Published var macAddress: String? = "b2:c0:03:46:08:3b"
     
     @Published var state: VZVirtualMachine.State?
     
@@ -68,6 +69,7 @@ class VirtualMachineViewModel: NSObject, ObservableObject, VZVirtualMachineDeleg
         guard let kernelURL = kernelURL,
               let initialRamdiskURL = initialRamdiskURL,
               let kernelParameter = kernelParameter,
+              let macAddress = macAddress,
               let bootableImageURL = bootableImageURL else {
             return
         }
@@ -108,6 +110,7 @@ class VirtualMachineViewModel: NSObject, ObservableObject, VZVirtualMachineDeleg
         
         let networkDevice = VZVirtioNetworkDeviceConfiguration()
         networkDevice.attachment = VZNATNetworkDeviceAttachment()
+        networkDevice.macAddress = VZMACAddress.init(string: macAddress)!
         
         let config = VZVirtualMachineConfiguration()
         config.bootLoader = bootloader

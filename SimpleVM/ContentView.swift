@@ -10,11 +10,15 @@ import UniformTypeIdentifiers
 
 struct ContentView: View {
     
-    @StateObject var viewModel = VirtualMachineViewModel()
-    
+    @ObservedObject var viewModel = VirtualMachineViewModel()
+
     var body: some View {
         VStack(alignment: .leading) {
-            Text("vmlinuz: \(viewModel.kernelURL?.lastPathComponent ?? "(Drag to here)")")
+    
+            Text("Boot Parameter: ")
+            TextField("", text: Binding($viewModel.kernelParameter)!).disableAutocorrection(true)
+            
+            Text("vmlinux: \(viewModel.kernelURL?.lastPathComponent ?? "(Drag to here)")")
                 .padding([.top, .bottom])
                 .onDrop(of: [.fileURL], isTargeted: nil) { itemProviders -> Bool in
                     processDropItem(of: .kernel, items: itemProviders)

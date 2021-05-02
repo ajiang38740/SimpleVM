@@ -16,6 +16,7 @@ class VirtualMachineViewModel: NSObject, ObservableObject, VZVirtualMachineDeleg
     @Published var kernelURL: URL?
     @Published var initialRamdiskURL: URL?
     @Published var bootableImageURL: URL?
+    @Published var kernelParameter: String? = "console=hvc0 root=/dev/vda "
     
     @Published var state: VZVirtualMachine.State?
     
@@ -66,6 +67,7 @@ class VirtualMachineViewModel: NSObject, ObservableObject, VZVirtualMachineDeleg
     func start() {
         guard let kernelURL = kernelURL,
               let initialRamdiskURL = initialRamdiskURL,
+              let kernelParameter = kernelParameter,
               let bootableImageURL = bootableImageURL else {
             return
         }
@@ -75,7 +77,8 @@ class VirtualMachineViewModel: NSObject, ObservableObject, VZVirtualMachineDeleg
         
         let bootloader = VZLinuxBootLoader(kernelURL: kernelURL)
         bootloader.initialRamdiskURL = initialRamdiskURL
-        bootloader.commandLine = "console=hvc0"
+        NSLog("kernel parameter: \(kernelParameter)")
+        bootloader.commandLine = kernelParameter
         
         let serial = VZVirtioConsoleDeviceSerialPortConfiguration()
         
@@ -88,12 +91,13 @@ class VirtualMachineViewModel: NSObject, ObservableObject, VZVirtualMachineDeleg
         
         let memoryBalloon = VZVirtioTraditionalMemoryBalloonDeviceConfiguration()
         
+        NSLog("Disk Image to attach:  \(bootableImageURL)")
         let blockAttachment: VZDiskImageStorageDeviceAttachment
         
         do {
             blockAttachment = try VZDiskImageStorageDeviceAttachment(
                 url: bootableImageURL,
-                readOnly: true
+                readOnly: false
             )
         } catch {
             NSLog("Failed to load bootableImage: \(error)")
@@ -107,8 +111,8 @@ class VirtualMachineViewModel: NSObject, ObservableObject, VZVirtualMachineDeleg
         
         let config = VZVirtualMachineConfiguration()
         config.bootLoader = bootloader
-        config.cpuCount = 4
-        config.memorySize = 2 * 1024 * 1024 * 1024
+        config.cpuCount = 2
+        config.memorySize = 4 * 1024 * 1024 * 1024
         config.entropyDevices = [entropy]
         config.memoryBalloonDevices = [memoryBalloon]
         config.serialPorts = [serial]

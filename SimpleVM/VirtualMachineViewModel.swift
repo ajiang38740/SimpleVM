@@ -16,8 +16,10 @@ class VirtualMachineViewModel: NSObject, ObservableObject, VZVirtualMachineDeleg
     @Published var kernelURL: URL?
     @Published var initialRamdiskURL: URL?
     @Published var bootableImageURL: URL?
-    @Published var kernelParameter: String? = "console=hvc0 root=/dev/vda "
+    @Published var kernelParameter: String? = "console=hvc0 root=/dev/vda loglevel=7 "
     @Published var macAddress: String? = "b2:c0:03:46:08:3b"
+    @Published var cpuCount: String? = "2"
+    @Published var memMB: String? = "2048"
     
     @Published var state: VZVirtualMachine.State?
     
@@ -70,6 +72,8 @@ class VirtualMachineViewModel: NSObject, ObservableObject, VZVirtualMachineDeleg
               let initialRamdiskURL = initialRamdiskURL,
               let kernelParameter = kernelParameter,
               let macAddress = macAddress,
+              let cpuCount = cpuCount,
+              let memMB = memMB,
               let bootableImageURL = bootableImageURL else {
             return
         }
@@ -114,8 +118,8 @@ class VirtualMachineViewModel: NSObject, ObservableObject, VZVirtualMachineDeleg
         
         let config = VZVirtualMachineConfiguration()
         config.bootLoader = bootloader
-        config.cpuCount = 2
-        config.memorySize = 4 * 1024 * 1024 * 1024
+        config.cpuCount = Int(cpuCount)  ?? 2
+        config.memorySize = UInt64((Int(memMB) ?? 2048 ) * 1048576)
         config.entropyDevices = [entropy]
         config.memoryBalloonDevices = [memoryBalloon]
         config.serialPorts = [serial]
@@ -171,7 +175,7 @@ class VirtualMachineViewModel: NSObject, ObservableObject, VZVirtualMachineDeleg
     }
     
     func showConsole() {
-        consoleWindow.setContentSize(NSSize(width: 400, height: 300))
+        consoleWindow.setContentSize(NSSize(width: 1280, height: 720))
         consoleWindow.title = "Console"
         consoleWindowController.showWindow(nil)
     }

@@ -19,6 +19,8 @@ class ConsoleViewController: NSViewController, TerminalViewDelegate {
     
     private var readPipe: Pipe?
     private var writePipe: Pipe?
+    
+    private var chaningSize = false
         
     override func loadView() {
         view = NSView()
@@ -32,6 +34,10 @@ class ConsoleViewController: NSViewController, TerminalViewDelegate {
         super.viewDidLoad()
         
         view.addSubview(terminalView)
+        chaningSize = true
+        terminalView.frame = view.frame
+        chaningSize = false
+        terminalView.needsLayout = true
         NSLayoutConstraint.activate([
             terminalView.topAnchor.constraint(equalTo: view.topAnchor),
             terminalView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -55,7 +61,18 @@ class ConsoleViewController: NSViewController, TerminalViewDelegate {
     }
     
     func sizeChanged(source: TerminalView, newCols: Int, newRows: Int) {
+        if chaningSize {
+            return
+        }
         
+        chaningSize = true
+        
+        var newFrame = terminalView.getOptimalFrameSize()
+        let windowFrame = view.window!.frame
+        
+        newFrame = CGRect(x: windowFrame.minX, y: windowFrame.minY, width: newFrame.width, height: windowFrame.height - view.frame.height + newFrame.height)
+        view.window?.setFrame(newFrame, display: true, animate: false)
+        chaningSize = false
     }
     
     func setTerminalTitle(source: TerminalView, title: String) {

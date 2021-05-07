@@ -15,33 +15,66 @@ struct ContentView: View {
     var body: some View {
         VStack(alignment: .leading) {
     
-            Text("Boot Parameter: ")
-            TextField("", text: Binding($viewModel.kernelParameter)!).disableAutocorrection(true)
+            VStack(alignment: .leading, spacing: 1.0) {
+                Text("CPU Count: ")
+                    .font(.title3)
+                    .foregroundColor(Color.green)
+                TextField("", text: Binding($viewModel.cpuCount)!).disableAutocorrection(true)
+            }
             
-            Text("Mac Address: ")
-            TextField("", text: Binding($viewModel.macAddress)!).disableAutocorrection(true)
+            VStack(alignment: .leading, spacing: 1.0) {
+                Text("Memory (MB): ")
+                    .font(.title3)
+                    .foregroundColor(Color.green)
+                TextField("", text: Binding($viewModel.memMB)!).disableAutocorrection(true)
+            }
             
-            Text("vmlinux: \(viewModel.kernelURL?.lastPathComponent ?? "(Drag to here)")")
-                .padding([.top, .bottom])
-                .onDrop(of: [.fileURL], isTargeted: nil) { itemProviders -> Bool in
+            VStack(alignment: .leading, spacing: 1.0) {
+                Text("Boot Parameter: ")
+                    .font(.title3)
+                    .foregroundColor(Color.green)
+                TextField("", text: Binding($viewModel.kernelParameter)!).disableAutocorrection(true)
+                
+            }
+
+            VStack(alignment: .leading, spacing: 1.0) {
+                Text("Mac Address: ")
+                    .font(.title3)
+                    .foregroundColor(Color.green)
+                TextField("", text: Binding($viewModel.macAddress)!).disableAutocorrection(true)
+            }
+            
+            Spacer()
+                .padding(.vertical, 2.0)
+            
+            VStack(alignment: .leading, spacing: -14.0) {
+                Text("vmlinux: \(viewModel.kernelURL?.lastPathComponent ?? "(Drag to here)")")
+                    .font(.body)
+                    .foregroundColor(Color.orange)
+                    .padding([.top, .bottom])
+                    .onDrop(of: [.fileURL], isTargeted: nil) { itemProviders -> Bool in
                     processDropItem(of: .kernel, items: itemProviders)
                     return true
                 }
             
-            Text("initrd: \(viewModel.initialRamdiskURL?.lastPathComponent ?? "(Drag to here)")")
-                .padding([.top, .bottom])
-                .onDrop(of: [.fileURL], isTargeted: nil) { itemProviders -> Bool in
+                Text("initrd: \(viewModel.initialRamdiskURL?.lastPathComponent ?? "(Drag to here)")")
+                    .font(.body)
+                    .foregroundColor(Color.orange)
+                    .padding([.top, .bottom])
+                    .onDrop(of: [.fileURL], isTargeted: nil) { itemProviders -> Bool in
                     processDropItem(of: .ramdisk, items: itemProviders)
                     return true
                 }
             
-            Text("image: \(viewModel.bootableImageURL?.lastPathComponent ?? "(Drag to here)")")
-                .padding([.top, .bottom])
-                .onDrop(of: [.fileURL], isTargeted: nil) { itemProviders -> Bool in
+                Text("image: \(viewModel.bootableImageURL?.lastPathComponent ?? "(Drag to here)")")
+                    .font(.body)
+                    .foregroundColor(Color.orange)
+                    .padding([.top, .bottom])
+                    .onDrop(of: [.fileURL], isTargeted: nil) { itemProviders -> Bool in
                     processDropItem(of: .image, items: itemProviders)
                     return true
                 }
-            
+            }
             Spacer()
             
             HStack {
